@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UNICAL Mall</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-mode">
+
+  <!-- ===== TOP BAR (only shown after login) ===== -->
+  <header id="appHeader" hidden>
+    <div class="bar">
+      <div class="logo"><i>U</i>UNICAL<span>Mall</span></div>
+      <nav>
+        <a href="#/dashboard" data-route="dashboard">Dashboard</a>
+        <a href="#/shop" data-route="shop">Shop</a>
+        <a href="#/cart" data-route="cart">Cart (<span id="count">0</span>)</a>
+        <a href="#/orders" data-route="orders">Orders</a>
+        <a href="#/profile" data-route="profile">Profile</a>
+      </nav>
+      <div class="user-area">
+        <small id="welcome"></small>
+        <button class="link-btn" onclick="logout()">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===== SCREEN 1: LOGIN ===== -->
+    <section class="screen" id="screen-login" hidden>
+      <div class="card auth-card">
+        <div class="logo big"><i>U</i>UNICAL<span>Mall</span></div>
+        <h2>Log in</h2>
+        <p id="loginMsg" class="note"></p>
+        <form onsubmit="login(event)">
+          <input id="loginEmail" type="email" placeholder="Email address" required>
+          <input id="loginPw" type="password" placeholder="Password" required>
+          <label class="check"><input type="checkbox" onclick="togglePassword('loginPw', this.checked)"> Show password</label>
+          <br><button class="wide">Log in</button>
+        </form>
+        <p class="switch">New here? <a href="#/register">Create an account</a></p>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 2: REGISTER ===== -->
+    <section class="screen" id="screen-register" hidden>
+      <div class="card auth-card">
+        <div class="logo big"><i>U</i>UNICAL<span>Mall</span></div>
+        <h2>Create your account</h2>
+        <p id="registerMsg" class="note"></p>
+        <form onsubmit="register(event)">
+          <input id="regName" placeholder="Full name" required>
+          <input id="regMatric" placeholder="Matric number" required>
+          <input id="regEmail" type="email" placeholder="Email address" required>
+          <input id="regPhone" type="tel" placeholder="Phone number" required>
+          <input id="regPw" type="password" placeholder="Password (at least 6 characters)" minlength="6" required>
+          <label class="check"><input type="checkbox" onclick="togglePassword('regPw', this.checked)"> Show password</label>
+          <br><button class="wide">Register</button>
+        </form>
+        <p class="switch">Already have an account? <a href="#/login">Log in</a></p>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 3: DASHBOARD ===== -->
+    <section class="screen" id="screen-dashboard" hidden>
+      <h1 id="greeting"></h1>
+      <div class="stats" id="stats"></div>
+      <div class="banner" id="banner"></div>
+      <div class="tiles">
+        <a class="tile" href="#/shop">🛍️<b>Shop</b>Browse all products</a>
+        <a class="tile" href="#/cart">🛒<b>Cart</b>Review and check out</a>
+        <a class="tile" href="#/orders">📦<b>Orders</b>See what you ordered</a>
+        <a class="tile" href="#/profile">👤<b>Profile</b>Your account details</a>
+      </div>
+      <div class="sec">
+        <div class="head flash"><h2>⚡ Flash Sales</h2><span>Time left: <b id="cd"></b></span></div>
+        <div class="grid" id="flashgrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 4: SHOP ===== -->
+    <section class="screen" id="screen-shop" hidden>
+      <input id="q" class="shop-search" placeholder="Search products..." oninput="renderShop()">
+      <div class="chips" id="cats"></div>
+      <div class="sec">
+        <div class="head"><h2 id="title">All products</h2></div>
+        <div class="grid" id="products"></div>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 5: CART + CHECKOUT ===== -->
+    <section class="screen" id="screen-cart" hidden>
+      <div class="two">
+        <div class="card"><h2>🛒 Your cart</h2><div id="cart"></div></div>
+        <div class="card">
+          <h2>Delivery</h2>
+          <label>Delivery method</label>
+          <select id="method" onchange="renderCart()">
+            <option value="0">Pick up at the Mall (free)</option>
+            <option value="300">Campus Rider (₦300)</option>
+            <option value="500">Class Delivery (₦500)</option>
+            <option value="700">Express Delivery (₦700)</option>
+          </select>
+          <label>Location on campus</label>
+          <select id="place">
+            <option>Faculty of Science</option><option>Faculty of Arts</option><option>Faculty of Law</option>
+            <option>University Library</option><option>Student Hostel</option><option>Main Gate</option>
+          </select>
+          <label>Class or room</label>
+          <input id="room" placeholder="e.g. Lecture Hall 2">
+          <br><button onclick="placeOrder()">Place order</button>
+          <p id="msg" class="note error"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 6: ORDERS ===== -->
+    <section class="screen" id="screen-orders" hidden>
+      <h1>Your orders</h1>
+      <p id="orderNotice" class="note"></p>
+      <div id="orderList"></div>
+    </section>
+
+    <!-- ===== SCREEN 7: PROFILE ===== -->
+    <section class="screen" id="screen-profile" hidden>
+      <div class="card auth-card">
+        <h2>Your profile</h2>
+        <div id="profileInfo"></div>
+        <br><button class="wide" onclick="logout()">Log out</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast" hidden></div>
+
+  <footer>
+    &copy; 2026 UNICAL Mall &middot; Call to order: 07026100761<br>
+    Student project, not an official University of Calabar website.
+  </footer>
+
+  <!-- Script order matters: each file uses the ones above it -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/shop.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
